@@ -9,3 +9,13 @@
     <img height="20" src="https://badgen.org/img/zenn/sumire_sakamoto/articles?style=plastic" />
   </a>
 </p>
+
+## Stats
+![](http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=sumiredc&theme=gruvbox)
+![](http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=sumiredc&theme=gruvbox)
+![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=sumiredc&theme=gruvbox)
+![](http://github-profile-summary-cards.vercel.app/api/cards/stats?username=sumiredc&theme=gruvbox)
+![](http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=sumiredc&theme=gruvbox&utcOffset=9)
+
+## Trophy
+![trophy](https://github-profile-trophy.vercel.app/?username=sumiredc&theme=gruvbox)
