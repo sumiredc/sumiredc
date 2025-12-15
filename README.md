@@ -11,11 +11,11 @@
 </p>
 
 ## Stats
-![](http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=sumiredc&theme=gruvbox)
-![](http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=sumiredc&theme=gruvbox)
-![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=sumiredc&theme=gruvbox)
-![](http://github-profile-summary-cards.vercel.app/api/cards/stats?username=sumiredc&theme=gruvbox)
-![](http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=sumiredc&theme=gruvbox&utcOffset=9)
+![](http://github-profile-summary-cards.vercel.app/api/cards/profile-details?username=sumiredc&theme=dracula)
+![](http://github-profile-summary-cards.vercel.app/api/cards/repos-per-language?username=sumiredc&theme=dracula)
+![](http://github-profile-summary-cards.vercel.app/api/cards/most-commit-language?username=sumiredc&theme=dracula)
+![](http://github-profile-summary-cards.vercel.app/api/cards/stats?username=sumiredc&theme=dracula)
+![](http://github-profile-summary-cards.vercel.app/api/cards/productive-time?username=sumiredc&theme=dracula&utcOffset=9)
 
 ## Trophy
 ![](https://github-profile-trophy.vercel.app/?username=sumiredc&theme=dracula)
