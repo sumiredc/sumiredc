@@ -34,8 +34,11 @@ const SUMIRE: Engineer = Engineer {
 
 ## Stats
 
-<p align="left">
+<p align="center">
   <img height="180" src="https://streak-stats.demolab.com/?user=sumiredc&theme=dracula&date_format=Y-m-d" />
+</p>
+
+<p align="center">
   <img height="180" src="https://raw.githubusercontent.com/sumiredc/sumiredc/output/langs-dark.svg" />
   <img height="180" src="https://raw.githubusercontent.com/sumiredc/sumiredc/output/repolangs-dark.svg" />
 </p>
