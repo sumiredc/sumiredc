@@ -5,9 +5,6 @@
   <a href="https://github.com/sumiredc">
     <img height="20" src="https://img.shields.io/github/followers/sumiredc?label=follow&logo=github&style=flat" />
   </a>
-  <a href="https://zenn.dev/sumire_sakamoto">
-    <img height="20" src="https://badgen.org/img/zenn/sumire_sakamoto/articles?style=plastic" />
-  </a>
 </p>
 
 ```rust
@@ -16,7 +13,6 @@ struct Engineer {
     company: &'static str,
     location: &'static str,
     languages: &'static [&'static str],
-    writing: &'static str,
 }
 
 const SUMIRE: Engineer = Engineer {
@@ -24,7 +20,6 @@ const SUMIRE: Engineer = Engineer {
     company: "SUMIRE SAKAMOTO Inc.",
     location: "Japan 🇯🇵",
     languages: &["Rust", "PHP", "Go", "TypeScript"],
-    writing: "https://zenn.dev/sumire_sakamoto",
 };
 ```
 
@@ -41,6 +36,7 @@ const SUMIRE: Engineer = Engineer {
 
 <p align="left">
   <img height="180" src="https://streak-stats.demolab.com/?user=sumiredc&theme=dracula&date_format=Y-m-d" />
+  <img height="180" src="https://raw.githubusercontent.com/sumiredc/sumiredc/output/langs-dark.svg" />
 </p>
 
 ![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=sumiredc&theme=dracula&hide_border=true&area=true)
