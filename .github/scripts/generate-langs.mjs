@@ -27,24 +27,35 @@ async function api(path) {
   return res.json();
 }
 
-async function fetchLanguageBytes() {
+async function fetchRepos() {
   const repos = [];
   for (let page = 1; ; page++) {
     const batch = await api(`/users/${LOGIN}/repos?per_page=100&page=${page}`);
     repos.push(...batch);
     if (batch.length < 100) break;
   }
+  return repos.filter((r) => !r.fork);
+}
+
+async function fetchLanguageBytes(repos) {
   const totals = new Map();
   await Promise.all(
-    repos
-      .filter((r) => !r.fork)
-      .map(async (r) => {
-        const langs = await api(`/repos/${r.full_name}/languages`);
-        for (const [lang, bytes] of Object.entries(langs)) {
-          totals.set(lang, (totals.get(lang) ?? 0) + bytes);
-        }
-      }),
+    repos.map(async (r) => {
+      const langs = await api(`/repos/${r.full_name}/languages`);
+      for (const [lang, bytes] of Object.entries(langs)) {
+        totals.set(lang, (totals.get(lang) ?? 0) + bytes);
+      }
+    }),
   );
+  return totals;
+}
+
+function countPrimaryLanguages(repos) {
+  const totals = new Map();
+  for (const r of repos) {
+    if (!r.language) continue;
+    totals.set(r.language, (totals.get(r.language) ?? 0) + 1);
+  }
   return totals;
 }
 
@@ -87,7 +98,7 @@ const THEMES = {
   },
 };
 
-function buildSvg(entries, theme) {
+function buildSvg(entries, theme, title) {
   const width = 320;
   const pad = 20;
   const barY = 52;
@@ -102,7 +113,7 @@ function buildSvg(entries, theme) {
     `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">`,
     `<title>Top languages by bytes of code</title>`,
     `<rect x="0.5" y="0.5" width="${width - 1}" height="${height - 1}" rx="6" fill="${theme.bg}" stroke="${theme.border}"/>`,
-    `<text x="${pad}" y="32" font-family="ui-monospace,monospace" font-size="15" font-weight="600" fill="${theme.title}">$ tokei --sort code</text>`,
+    `<text x="${pad}" y="32" font-family="ui-monospace,monospace" font-size="15" font-weight="600" fill="${theme.title}">${title}</text>`,
   );
 
   // Stacked percentage bar
@@ -124,9 +135,9 @@ function buildSvg(entries, theme) {
     const lx = pad + col * (innerW / 2);
     const ly = legendY + row * rowH + 10;
     parts.push(
-      `<circle cx="${lx + 5}" cy="${ly - 4}" r="5" fill="${e.color}"/>`,
+      `<circle cx="${lx + 5}" cy="${ly - 4}" r="5" fill="${e.color}" stroke="${theme.muted}" stroke-width="0.75"/>`,
       `<text x="${lx + 16}" y="${ly}" font-family="ui-monospace,monospace" font-size="11" fill="${theme.text}">${e.lang}</text>`,
-      `<text x="${lx + innerW / 2 - 12}" y="${ly}" text-anchor="end" font-family="ui-monospace,monospace" font-size="11" fill="${theme.muted}">${e.share.toFixed(1)}%</text>`,
+      `<text x="${lx + innerW / 2 - 12}" y="${ly}" text-anchor="end" font-family="ui-monospace,monospace" font-size="11" fill="${theme.muted}">${e.value}</text>`,
     );
   });
 
@@ -134,25 +145,40 @@ function buildSvg(entries, theme) {
   return parts.join("\n");
 }
 
-const totals = await fetchLanguageBytes();
-const grand = [...totals.values()].reduce((a, b) => a + b, 0);
-const sorted = [...totals.entries()].sort((a, b) => b[1] - a[1]);
-const top = sorted.slice(0, TOP_N);
-const otherBytes = sorted.slice(TOP_N).reduce((sum, [, b]) => sum + b, 0);
-
-const entries = top.map(([lang, bytes]) => ({
-  lang,
-  share: (bytes / grand) * 100,
-  color: LANG_COLORS[lang] ?? "#8b949e",
-}));
-if (otherBytes > 0) {
-  entries.push({ lang: "Other", share: (otherBytes / grand) * 100, color: "#8b949e" });
+function toEntries(totals, fmtValue) {
+  const grand = [...totals.values()].reduce((a, b) => a + b, 0);
+  const sorted = [...totals.entries()].sort((a, b) => b[1] - a[1]);
+  const entries = sorted.slice(0, TOP_N).map(([lang, n]) => ({
+    lang,
+    share: (n / grand) * 100,
+    value: fmtValue(n, grand),
+    color: LANG_COLORS[lang] ?? "#8b949e",
+  }));
+  const rest = sorted.slice(TOP_N).reduce((sum, [, n]) => sum + n, 0);
+  if (rest > 0) {
+    entries.push({
+      lang: "Other",
+      share: (rest / grand) * 100,
+      value: fmtValue(rest, grand),
+      color: "#8b949e",
+    });
+  }
+  return entries;
 }
 
+const percent = (n, grand) => `${((n / grand) * 100).toFixed(1)}%`;
+const count = (n) => `${n}`;
+
+const repos = await fetchRepos();
+const byBytes = toEntries(await fetchLanguageBytes(repos), percent);
+const byRepos = toEntries(countPrimaryLanguages(repos), count);
+
 await mkdir(OUT_DIR, { recursive: true });
-await writeFile(join(OUT_DIR, "langs.svg"), buildSvg(entries, THEMES.light));
-await writeFile(join(OUT_DIR, "langs-dark.svg"), buildSvg(entries, THEMES.dark));
-console.log(
-  `Generated ${OUT_DIR}/langs.svg and ${OUT_DIR}/langs-dark.svg: ` +
-    entries.map((e) => `${e.lang} ${e.share.toFixed(1)}%`).join(", "),
-);
+for (const [file, entries, title] of [
+  ["langs", byBytes, "$ tokei --sort code"],
+  ["repolangs", byRepos, "$ gh repo list --json language"],
+]) {
+  await writeFile(join(OUT_DIR, `${file}.svg`), buildSvg(entries, THEMES.light, title));
+  await writeFile(join(OUT_DIR, `${file}-dark.svg`), buildSvg(entries, THEMES.dark, title));
+  console.log(`Generated ${file}: ` + entries.map((e) => `${e.lang} ${e.value}`).join(", "));
+}

@@ -37,6 +37,7 @@ const SUMIRE: Engineer = Engineer {
 <p align="left">
   <img height="180" src="https://streak-stats.demolab.com/?user=sumiredc&theme=dracula&date_format=Y-m-d" />
   <img height="180" src="https://raw.githubusercontent.com/sumiredc/sumiredc/output/langs-dark.svg" />
+  <img height="180" src="https://raw.githubusercontent.com/sumiredc/sumiredc/output/repolangs-dark.svg" />
 </p>
 
 ![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=sumiredc&theme=dracula&hide_border=true&area=true)
